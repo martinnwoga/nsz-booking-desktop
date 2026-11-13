@@ -1,5 +1,5 @@
 // NSZ Booking for Mac and Windows. A window around the live app, plus the desktop powers a
-// browser tab doesn't have: screen sharing with a picker, computer sound, and its own Dock icon.
+// browser tab doesn't have: screen sharing with a picker, sound from any app, and its own Dock icon.
 const { app, BrowserWindow, session, desktopCapturer, shell, systemPreferences, ipcMain, Menu } = require("electron");
 const path = require("path");
 
@@ -9,6 +9,9 @@ const isMac = process.platform === "darwin";
 
 // Google blocks sign in from apps that say "Electron" in their name tag, so look like plain Chrome.
 app.userAgentFallback = app.userAgentFallback.replace(/\s*Electron\/\S+/, "").replace(/\s*nsz-booking-desktop\/\S+/i, "").replace(/\s*NSZ Booking\/\S+/i, "");
+
+// Lets screen share carry computer sound on Macs too (Serato, Spotify, any app), not just Windows.
+if (isMac) app.commandLine.appendSwitch("enable-features", "MacLoopbackAudioForScreenShare,MacSckSystemAudioLoopbackOverride");
 
 let win;
 const allowedHosts = new Set([new URL(APP_URL).host, "accounts.google.com", "checkout.stripe.com"]);
@@ -115,8 +118,8 @@ app.whenReady().then(async () => {
       const sources = await desktopCapturer.getSources({ types: ["screen", "window"] });
       const chosen = sources.find((s) => s.id === id);
       if (!chosen) return callback({});
-      // Computer sound: Windows can share it with the screen. Macs can't share system sound from apps without extra drivers.
-      callback({ video: chosen, ...(request.audioRequested && process.platform === "win32" ? { audio: "loopback" } : {}) });
+      // Computer sound from every app (Serato, Spotify, videos) goes with the screen when you ask for it.
+      callback({ video: chosen, ...(request.audioRequested ? { audio: "loopback" } : {}) });
     } catch {
       callback({});
     }

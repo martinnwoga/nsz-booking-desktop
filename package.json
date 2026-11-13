@@ -1,7 +1,7 @@
 {
   "name": "nsz-booking-desktop",
   "productName": "NSZ Booking",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NSZ Booking for Mac and Windows",
   "author": "No Stress Zone Entertainment LLC",
   "main": "main.js",
@@ -40,7 +40,8 @@
       "extendInfo": {
         "NSCameraUsageDescription": "NSZ Booking uses your camera for video calls.",
         "NSMicrophoneUsageDescription": "NSZ Booking uses your microphone for video calls and recordings.",
-        "NSScreenCaptureUsageDescription": "NSZ Booking lets you share your screen in video calls."
+        "NSScreenCaptureUsageDescription": "NSZ Booking lets you share your screen in video calls.",
+        "NSAudioCaptureUsageDescription": "NSZ Booking shares your computer sound (like Serato or music apps) with the people in your call when you turn on Share sound."
       },
       "hardenedRuntime": false,
       "gatekeeperAssess": false
