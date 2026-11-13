@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+<title>Share your screen</title>
+<style>
+  body { margin: 0; background: #18181B; color: #FAFAFA; font: 14px -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 18px 20px 6px; font-size: 18px; font-weight: 600; }
+  p { margin: 0 20px 12px; color: #A1A1AA; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 20px 80px; }
+  button.src { background: #27272A; border: 2px solid #27272A; border-radius: 12px; padding: 8px; color: #FAFAFA; cursor: pointer; text-align: left; }
+  button.src.sel { border-color: #2448FF; }
+  button.src img { width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #0A0A0A; border-radius: 8px; display: block; }
+  button.src span { display: block; margin-top: 6px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  footer { position: fixed; left: 0; right: 0; bottom: 0; padding: 14px 20px; background: #18181B; border-top: 1px solid #27272A; display: flex; gap: 10px; justify-content: flex-end; }
+  footer button { padding: 10px 18px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: #FAFAFA; font: inherit; cursor: pointer; }
+  footer button.go { background: #2448FF; border-color: #2448FF; }
+  footer button:disabled { opacity: .5; }
+</style>
+</head>
+<body>
+<header>Share your screen</header>
+<p>Pick a whole screen or one window.</p>
+<div class="grid" id="grid"></div>
+<footer><button id="cancel">Cancel</button><button class="go" id="go" disabled>Share</button></footer>
+<script>
+  let picked = null;
+  const grid = document.getElementById("grid");
+  window.nszDesktop.sources().then((list) => {
+    for (const s of list) {
+      const b = document.createElement("button");
+      b.className = "src";
+      const img = document.createElement("img");
+      img.src = s.thumb;
+      const name = document.createElement("span");
+      name.textContent = s.name;
+      b.append(img, name);
+      b.onclick = () => {
+        document.querySelectorAll(".src").forEach((x) => x.classList.remove("sel"));
+        b.classList.add("sel");
+        picked = s.id;
+        document.getElementById("go").disabled = false;
+      };
+      b.ondblclick = () => window.nszDesktop.choose(s.id);
+      grid.append(b);
+    }
+  });
+  document.getElementById("go").onclick = () => picked && window.nszDesktop.choose(picked);
+  document.getElementById("cancel").onclick = () => window.nszDesktop.choose(null);
+</script>
+</body>
+</html>

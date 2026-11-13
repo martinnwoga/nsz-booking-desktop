@@ -1,0 +1,46 @@
+{
+  "name": "nsz-booking-desktop",
+  "productName": "NSZ Booking",
+  "version": "1.0.0",
+  "description": "NSZ Booking for Mac and Windows",
+  "author": "No Stress Zone Entertainment LLC",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.nostresszoneent.booking",
+    "productName": "NSZ Booking",
+    "artifactName": "NSZ-Booking-${version}-${os}-${arch}.${ext}",
+    "directories": { "buildResources": "build" },
+    "files": ["main.js", "preload.js", "picker.html"],
+    "mac": {
+      "category": "public.app-category.business",
+      "target": [{ "target": "dmg", "arch": ["universal"] }],
+      "icon": "build/icon.png",
+      "identity": null,
+      "extendInfo": {
+        "NSCameraUsageDescription": "NSZ Booking uses your camera for video calls.",
+        "NSMicrophoneUsageDescription": "NSZ Booking uses your microphone for video calls and recordings.",
+        "NSScreenCaptureUsageDescription": "NSZ Booking lets you share your screen in video calls."
+      }
+    },
+    "dmg": { "title": "NSZ Booking" },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "NSZ Booking"
+    },
+    "publish": [{ "provider": "github", "owner": "martinnwoga", "repo": "nsz-booking-desktop", "releaseType": "release" }]
+  }
+}
