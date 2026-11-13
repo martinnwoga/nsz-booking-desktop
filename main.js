@@ -101,9 +101,12 @@ app.whenReady().then(async () => {
 
   const ses = session.defaultSession;
   ses.setPermissionRequestHandler((wc, permission, cb, details) => {
-    const ok = ["media", "display-capture", "notifications", "clipboard-sanitized-write", "clipboard-read", "fullscreen"].includes(permission);
+    const ok = ["media", "display-capture", "notifications", "clipboard-sanitized-write", "clipboard-read", "fullscreen", "speaker-selection"].includes(permission);
     cb(ok && isOurs(details.requestingUrl || wc.getURL()));
   });
+  // Lets the call page list every camera, mic, mixer and speaker by name.
+  ses.setPermissionCheckHandler((wc, permission, origin) => isOurs(origin || wc?.getURL() || ""));
+  ses.setDevicePermissionHandler?.((details) => isOurs(details.origin || ""));
 
   ses.setDisplayMediaRequestHandler(async (request, callback) => {
     try {
@@ -125,6 +128,8 @@ app.whenReady().then(async () => {
     {
       label: "View",
       submenu: [
+        { label: "Back", accelerator: "CmdOrCtrl+[", click: () => win?.webContents.navigationHistory.canGoBack() && win.webContents.navigationHistory.goBack() },
+        { label: "Forward", accelerator: "CmdOrCtrl+]", click: () => win?.webContents.navigationHistory.canGoForward() && win.webContents.navigationHistory.goForward() },
         { label: "Home", accelerator: "CmdOrCtrl+Shift+H", click: () => win?.loadURL(HOME) },
         { role: "reload" },
         { role: "togglefullscreen" },
