@@ -1,18 +1,27 @@
 name: Build desktop apps
 
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release once, before the builds upload to it
+        run: |
+          V=$(node -p "require('./package.json').version")
+          gh release view "v$V" >/dev/null 2>&1 || gh release create "v$V" --title "NSZ Booking $V" --notes "Download for Mac (.dmg) or Windows (.exe) below." --target "${{ github.sha }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
+    needs: release
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -22,7 +31,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install
-      - name: Build and publish
+      - name: Build and upload
         run: npx electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
