@@ -16,7 +16,7 @@
   "build": {
     "appId": "com.nostresszoneent.booking",
     "productName": "NSZ Booking",
-    "artifactName": "NSZ-Booking-${version}-${os}-${arch}.${ext}",
+    "artifactName": "NSZ-Booking-${os}.${ext}",
     "directories": { "buildResources": "build" },
     "files": ["main.js", "preload.js", "picker.html"],
     "mac": {
